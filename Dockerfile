@@ -1,30 +1,26 @@
-FROM dunglas/frankenphp:1-php8.3
+FROM php:8.3-fpm
 
-# Install necessary system libraries and the PostgreSQL extension
 RUN apt-get update && apt-get install -y \
     libpq-dev \
+    nginx \
     git \
     unzip \
     && docker-php-ext-install pdo pdo_pgsql \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Establish the secure cloud container application directory
 WORKDIR /app
 
-# Mirror your codebase insidthe running container context
 COPY . /app
 
-# Download clean Composer dependencies for production
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Grant necessary server permissions for storage write access operations
 RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
 
-EXPOSE 8080
-
-# At the bottom of your Dockerfile
+COPY docker/nginx.conf /etc/nginx/sites-available/default
 COPY start.sh /app/start.sh
 RUN chmod +x /app/start.sh
+
+EXPOSE 10000
 
 CMD ["/bin/bash", "/app/start.sh"]
