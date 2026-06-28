@@ -1,4 +1,4 @@
-FROM dunglas/frankenphp:latest-php8.3
+FROM dunglas/frankenphp:1-php8.3
 
 # Install necessary system libraries and the PostgreSQL extension
 RUN apt-get update && apt-get install -y \
@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y \
     git \
     unzip \
     && docker-php-ext-install pdo pdo_pgsql \
-    && apt-get clean && rm -rf /var/lib/lists/*
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Establish the secure cloud container application directory
 WORKDIR /app
