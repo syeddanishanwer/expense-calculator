@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
 # Establish the secure cloud container application directory
 WORKDIR /app
 
-# Mirror your codebase inside the running container context
+# Mirror your codebase insidthe running container context
 COPY . /app
 
 # Download clean Composer dependencies for production
@@ -22,3 +22,9 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
 
 EXPOSE 8080
+
+# At the bottom of your Dockerfile
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
+CMD ["/bin/bash", "/app/start.sh"]
